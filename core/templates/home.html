@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+<div class="col-md-6 offset-md-3">
+
+    {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+    {% endif %}
+    {% if user.is_authenticated %}
+    <h1> Hello World! </h1>
+
+    {% else %}
+
+    <h1 class="bg-dark text-center text-white"> Login <br/> </h1>
+    <form action="{% url 'home.html' %}" method="POST">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" class="form-control" name="username">
+            <div class="form-text">Do not share your username and password with anyone else.</div>
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" class="form-control" name="password">
+        </div>
+        <button type="submit" class="btn btn-dark">Login</button>
+        
+    </form>
+
+    {% endif %}
+</div>
+
+{% endblock %}
