@@ -3,7 +3,7 @@
 {% block content %}
 
 
-<div class="col-md-6 offset-md-3">
+<div class="col-md-6 w-auto">
 
     {% if messages %}
         {% for message in messages %}
@@ -14,7 +14,36 @@
         {% endfor %}
     {% endif %}
     {% if user.is_authenticated %}
-    <h1> Hello World! </h1>
+        <div class="bg-dark text-white text-center">
+            <h1> Client List </h1>
+            <div class="end">
+                <label for="search" class="text-white">Search:</label>
+                <input type="text" name="search" id="search" placeholder="Search">
+            </div>
+        </div>
+
+        {% if clients %}
+          <table class="table table-striped table-hover">
+            <tr class="table-dark">
+                <th>ID</th><th>First Name</th><th>Last Name</th><th>Email</th><th>Contact Nr.</th><th>Address</th><th>Area</th><th>Suburb</th><th>Created</th>
+            </tr>
+            {% for client in clients %}
+            <tr>
+                <td>{{ client.id }}</td>
+                <td>{{ client.first_name }}</td>
+                <td>{{ client.last_name }}</td>
+                <td>{{ client.email }}</td>
+                <td>{{ client.contact }}</td>
+                <td>{{ client.address }}</td>
+                <td>{{ client.area }}</td>
+                <td>{{ client.suburb }}</td>
+                <td>{{ client.created_at }}</td>
+                <td><a href="{% url 'client_details.html' client.id %}"><button type="button" class="btn btn-dark">Details</button></a></td>
+            </tr>
+            {% endfor %}
+          </table>
+          <a href="{% url 'add_client.html' %}" class="btn btn-dark">Add Client</a>
+        {% endif %}
 
     {% else %}
 
