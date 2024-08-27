@@ -3,6 +3,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .register import SignUpForm, AddClientForm
 from .models import Clients
+from django.http import JsonResponse
+from django.template.loader import render_to_string
 
 def home(request):
     clients = Clients.objects.all()
@@ -68,12 +70,17 @@ def delete_details(request, pk):
 
 def add_client(request):
     form = AddClientForm(request.POST or None)
-
     if request.user.is_authenticated:
+        
         if form.is_valid():
-            add_client = form.save()
-            messages.success(request, "Client has been added...")
-            return redirect("home.html")
+            number = form.cleaned_data.get('contact')
+            if not Clients.objects.filter(contact=number).exists():
+                add_client = form.save()
+                messages.success(request, "Client has been added...")
+                return redirect("home.html")
+            else:
+                form.add_error('contact', 'This user is already registered...')
+                return render(request, "add_client.html", {'form': form})
         else:
             return render(request, "add_client.html", {'form': form})
     else:
@@ -93,4 +100,9 @@ def edit_details(request, pk):
     else:
         messages.error(request, "You must be logged in to view this page...")
         return redirect("home.html")
-    
+
+def filter(request):
+    search_query = request.GET.get('search', '')
+    filtered_clients = Clients.objects.filter(last_name__icontains=search_query)  
+    # Render table as an HTML fragment
+    return render(request, 'home.html', {'filtererd_clients': filtered_clients})

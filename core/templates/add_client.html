@@ -1,6 +1,18 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
+{% if form.add_errors %}
+    <ul class="alert alert-danger alert-dismissible fade show">
+        {% for field, error_list in form.errors.items %}
+            <li for="{{ field }}">
+                {{ error_list.0 }}
+            </li>
+        {% endfor %}
+    </ul>
+
+{% endif %}
+
 <h1 class="bg-dark text-center text-white rounded"> Add New Client </h1>
 
 <div class="col-md-6 offset-md-3">
@@ -10,7 +22,7 @@
         {{ form.as_p }}
 
         <button type="submit" class="btn btn-dark">Submit</button>
-        
+        <a href="{% url 'home.html' %}" class="btn btn-danger">Cancel</a>
     </form>
 </div>
 {% endblock %}

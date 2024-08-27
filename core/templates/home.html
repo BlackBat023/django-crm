@@ -14,34 +14,41 @@
         {% endfor %}
     {% endif %}
     {% if user.is_authenticated %}
-        <div class="bg-dark text-white text-center">
-            <h1> Client List </h1>
-            <div class="end">
-                <label for="search" class="text-white">Search:</label>
-                <input type="text" name="search" id="search" placeholder="Search">
+        <div class="bg-dark text-white text-center py-2 rounded">
+            <h1 class="col-md-6 offset-md-3"> Client List </h1>
+            <div class="col-md-8 offset-md-2">
+                <form id="search-form">
+                    <label for="search" class="text-white">Search:</label>
+                    <input type="text" name="search_query" id="myInput" onkeyup="searchFunction()" placeholder="Search">
+                </form>
             </div>
+            <h5>Total Clients: {{ clients.count }}</h5>
         </div>
 
         {% if clients %}
-          <table class="table table-striped table-hover">
-            <tr class="table-dark">
+        <div id="search-results">
+          <table class="table table-striped table-hover display" id="dataTable">
+            <thead class="table-dark">
                 <th>ID</th><th>First Name</th><th>Last Name</th><th>Email</th><th>Contact Nr.</th><th>Address</th><th>Area</th><th>Suburb</th><th>Created</th>
-            </tr>
-            {% for client in clients %}
-            <tr>
-                <td>{{ client.id }}</td>
-                <td>{{ client.first_name }}</td>
-                <td>{{ client.last_name }}</td>
-                <td>{{ client.email }}</td>
-                <td>{{ client.contact }}</td>
-                <td>{{ client.address }}</td>
-                <td>{{ client.area }}</td>
-                <td>{{ client.suburb }}</td>
-                <td>{{ client.created_at }}</td>
-                <td><a href="{% url 'client_details.html' client.id %}"><button type="button" class="btn btn-dark">Details</button></a></td>
-            </tr>
-            {% endfor %}
+            </thead>
+                {% for client in clients %}
+                <tbody>
+                    <tr>
+                        <td>{{ client.id }}</td>
+                        <td>{{ client.first_name }}</td>
+                        <td>{{ client.last_name }}</td>
+                        <td>{{ client.email }}</td>
+                        <td>{{ client.contact }}</td>
+                        <td>{{ client.address }}</td>
+                        <td>{{ client.area }}</td>
+                        <td>{{ client.suburb }}</td>
+                        <td>{{ client.created_at }}</td>
+                        <td><a href="{% url 'client_details.html' client.id %}"><button type="button" class="btn btn-dark">Details</button></a></td>
+                    </tr>
+                </tbody>
+                {% endfor %}
           </table>
+        </div>
           <a href="{% url 'add_client.html' %}" class="btn btn-dark">Add Client</a>
         {% endif %}
 
@@ -66,4 +73,29 @@
     {% endif %}
 </div>
 
+<script>
+    function searchFunction() {
+        // Declare variables
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("myInput");
+        filter = input.value.toLowerCase();
+        table = document.getElementById("dataTable");
+        tr = table.getElementsByTagName("tr");
+    
+        // Loop through all table rows, and hide those who don't match the search query
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[2];
+            if (td) {
+                txtValue = td.textContent || td.innerText;
+                if (txtValue.toLowerCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
+</script>
+
 {% endblock %}
+
