@@ -43,19 +43,19 @@
                         <td>{{ client.area }}</td>
                         <td>{{ client.suburb }}</td>
                         <td>{{ client.created_at }}</td>
-                        <td><a href="{% url 'client_details.html' client.id %}"><button type="button" class="btn btn-dark">Details</button></a></td>
+                        <td><a href="{% url 'core:client_details.html' client.id %}"><button type="button" class="btn btn-dark">Details</button></a></td>
                     </tr>
                 </tbody>
                 {% endfor %}
           </table>
         </div>
-          <a href="{% url 'add_client.html' %}" class="btn btn-dark">Add Client</a>
+          <a href="{% url 'core:add_client.html' %}" class="btn btn-dark">Add Client</a>
         {% endif %}
 
     {% else %}
 
     <h1 class="bg-dark text-center text-white"> Login <br/> </h1>
-    <form action="{% url 'home.html' %}" method="POST">
+    <form action="{% url 'core:home.html' %}" method="POST">
         {% csrf_token %}
         <div class="mb-3">
             <label for="username" class="form-label">Username</label>

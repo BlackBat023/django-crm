@@ -44,3 +44,7 @@ class AddClientForm(forms.ModelForm):
         model = Clients
         exclude = ('user',)
 
+class AddOrderForm(forms.ModelForm):
+    client_id = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={'class':'form-control', 'placeholder':'Client ID'}), label='')
+    date = forms.DateField(required=True, widget=forms.widgets.DateInput(attrs={'class':'form-control', 'type':'date', 'placeholder':'Delivery Date'}), label='', localize=True)
+    product = forms.ChoiceField(required=True, choices=('Rooikrans', 'Black Wattle', 'Bloekom', 'Myrtle'), widget=forms.widgets.ChoiceWidget(attrs={'class':'form-control', 'placeholder':'Select Product'}))

@@ -1,0 +1,21 @@
+ToDo list:
+
+Setup Orders Application
+    - Add Orders to settings.py DONE
+    - Update urls linking Orders to main project DONE
+    - setup models.py DONE
+        - date
+        - product
+        - unit price
+        - qty
+        - delivery fee
+        - total cost
+        - Customer Notes
+        - method of payment
+        - payment status
+    - Order Capture form DONE
+    - Edit Order form
+    - Delete Order function
+    - Display Order History in Core App
+    - Access and print invoices
+    - Export database to pdf function

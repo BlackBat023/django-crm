@@ -3,8 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .register import SignUpForm, AddClientForm
 from .models import Clients
-from django.http import JsonResponse
-from django.template.loader import render_to_string
+from orders.models import Orders
 
 def home(request):
     clients = Clients.objects.all()
@@ -52,7 +51,12 @@ def client_details(request, pk):
     if request.user.is_authenticated:
         # Lookup cutomer record
         client_record = Clients.objects.get(id=pk)
-        return render(request, "client_details.html", {"client_record": client_record})
+        orders_record = Orders.objects.all()
+        context = {
+            "client_record": client_record,
+            "orders_record": orders_record,
+        }
+        return render(request, "client_details.html", context)
     else:
         messages.error(request, "You must be logged in to view this page...")
         return redirect("home.html")
@@ -77,7 +81,7 @@ def add_client(request):
             if not Clients.objects.filter(contact=number).exists():
                 add_client = form.save()
                 messages.success(request, "Client has been added...")
-                return redirect("home.html")
+                return redirect("core:home.html")
             else:
                 form.add_error('contact', 'This user is already registered...')
                 return render(request, "add_client.html", {'form': form})
@@ -85,7 +89,7 @@ def add_client(request):
             return render(request, "add_client.html", {'form': form})
     else:
         messages.error(request, "You must be logged in to view this page...")
-        return redirect("home.html")
+        return redirect("core:home.html")
 
 def edit_details(request, pk):
     if request.user.is_authenticated:
@@ -101,8 +105,3 @@ def edit_details(request, pk):
         messages.error(request, "You must be logged in to view this page...")
         return redirect("home.html")
 
-def filter(request):
-    search_query = request.GET.get('search', '')
-    filtered_clients = Clients.objects.filter(last_name__icontains=search_query)  
-    # Render table as an HTML fragment
-    return render(request, 'home.html', {'filtererd_clients': filtered_clients})

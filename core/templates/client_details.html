@@ -3,24 +3,57 @@
 {% block content %}
 
 <div class="card">
-    <h3 class="card-header bg-dark text-center text-white">Client Details</h3>
+  <h3 class="card-header bg-dark text-center text-white">Client Details</h3>
+  <div class="card-body">
+    <h4 class="card-title">{{ client_record.first_name }} {{ client_record.last_name }}:</h4>
+    <p class="card-text">
+          <strong>ID:</strong> {{ client_record.id }}<br/>
+          <strong>Email:</strong> <a href="mailto:{{ client_record.email }}">{{ client_record.email }}</a><br/>
+          <strong>Contact Nr:</strong> {{ client_record.contact }}<br/>
+          <strong>Address:</strong> {{ client_record.address }}<br/>
+          <strong>Area:</strong> {{ client_record.area }}<br/>
+          <strong>Suburb:</strong> {{ client_record.suburb }}<br/>
+          <strong>Created:</strong> {{ client_record.created_at }}
+      </p>
+    <a href="{% url 'orders:add_order' client_record.id %}" class="btn btn-dark">Book Delivery</a>
+    <p>
+      <h3 class="text-black-300">>>>Delivery Order Placements currently under construction<<<</h3>
+    </p>
+  </div>
+</div>
+<div class="my-2">
+    <a href="{% url 'core:home.html' %}" class="btn btn-dark">Back</a>
+    <a href="{% url 'core:edit_details.html' client_record.id %}" class="btn btn-warning">Edit</a>
+    <a href="{% url 'core:delete_details' client_record.id %}" class="btn btn-danger">Delete</a>
+</div>
+
+<div class="col-md-10 offset-sm-1">
+  <div class="card">
+    <h3 class="card-header bg-dark text-center text-white">Order History</h3>
     <div class="card-body">
-      <h4 class="card-title">{{ client_record.first_name }} {{ client_record.last_name }}:</h4>
+      {% for orders in orders_record %}
+      {% if orders_record.client_id == client_record.id %}
+      <h4 class="card-title">Order Number: {{ orders.order_num }}</h4>
       <p class="card-text">
-            <strong>ID:</strong> {{ client_record.id }}<br/>
-            <strong>Email:</strong> <a href="mailto:{{ client_record.email }}">{{ client_record.email }}</a><br/>
-            <strong>Contact Nr:</strong> {{ client_record.contact }}<br/>
-            <strong>Address:</strong> {{ client_record.address }}<br/>
-            <strong>Area:</strong> {{ client_record.area }}<br/>
-            <strong>Suburb:</strong> {{ client_record.suburb }}<br/>
-            <strong>Created:</strong> {{ client_record.created_at }}
-        </p>
-      <a href="#" class="btn btn-dark">Go somewhere</a>
+            <strong>Order Date:</strong> {{ orders.date }}<br/>
+            <strong>Product:</strong> {{ orders.product }}</a><br/>
+            <strong>Quantity:</strong> {{ orders.qty }}<br/>
+            <strong>Unit Price:</strong> {{ orders.unit_price }}<br/>
+            <strong>Delivery Fee:</strong> {{ orders.delivery_fee }}<br/>
+            <strong>Total Cost:</strong> {{ orders.total_cost }}<br/>
+            <strong>Method of Payment:</strong> {{ orders.mop }}
+            <strong>Date of Payment:</strong> {{ orders.payment_date }}
+            <strong>Payment Status:</strong> {{ orders.payment_status }}
+            <strong>Notes:</strong> {{ orders.notes }}
+      </p>
+      {% endif %}
+      {% endfor %}
+      <p>
+        <h3 class="text-black-300">>>>No orders to view<<<</h3>
+      </p>
     </div>
   </div>
-    <div class="my-2">
-        <a href="{% url 'home.html' %}" class="btn btn-dark">Back</a>
-        <a href="{% url 'edit_details.html' client_record.id %}" class="btn btn-warning">Edit</a>
-        <a href="{% url 'delete_details' client_record.id %}" class="btn btn-danger">Delete</a>
-    </div>
+</div>
+<script>
+</script>
 {% endblock %}

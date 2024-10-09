@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% if form.add_errors %}
+    <ul class="alert alert-danger alert-dismissible fade show">
+        {% for field, error_list in form.errors.items %}
+            <li for="{{ field }}">
+                {{ error_list.0 }}
+            </li>
+        {% endfor %}
+    </ul>
+
+{% endif %}
+
+<h1 class="bg-dark text-center text-white rounded"> Capture Order for: {{ cid }} </h1>
+
+<div class="container col-md-10 offset-md-1 row">
+    <div class="col">
+        <form method="POST" id="itemForm">
+            {% csrf_token %}
+
+            <!-- Order Items -->
+            <h2>Order Items</h2>
+            {{ form.as_p }}
+            <button type="button" class="btn btn-dark" id="addItemBtn">Add Item</button>
+        </form>
+        <form method="post">   
+            <!-- Order Summary -->
+            <h2>Order Summary</h2>
+            {% csrf_token %}
+            {{ order_form.as_p }}
+
+            <button type="submit" class="btn btn-dark">Submit Order</button>
+            <a href="{% url 'core:home.html' %}" class="btn btn-danger">Cancel</a>
+        </form>
+    </div>
+    <div class="col" id="order-preview">
+        <h2>Order Preview</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Item</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Price</th>
+                </tr>
+            </thead>
+            <tbody id="orderPreview">
+                <!-- Table rows will be added here -->
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+    const cart = [];  
+  
+  // Add product to cart  
+  function addToCart(productId, qty) {  
+    const product = {  
+      id: productId,  
+      qty: qty  
+     };  
+     cart.push(product);  
+     updateCart();  
+  }  
+    
+  // Update cart  
+  function updateCart() {  
+     const cartHtml = cart.map(product => {  
+      return `  
+        <div>  
+            <span>Product: ${product.id}</span>  
+            <span>Qty: ${product.qty}</span>  
+        </div>  
+    `;  
+     }).join('');  
+     document.getElementById('cart').innerHTML = cartHtml;  
+  }  
+    
+  // Submit order  
+  function submitOrder() {  
+    const formData = new FormData();  
+    cart.forEach(product => {  
+        formData.append('product', product.id);  
+        formData.append('qty', product.qty);  
+    });  
+    formData.append('mop', document.getElementById('mop').value);  
+    formData.append('payment_status', document.getElementById('payment_status').value);  
+    formData.append('payment_date', document.getElementById('payment_date').value);  
+    fetch('/create_order/', {  
+        method: 'POST',  
+        body: formData  
+    })  
+        .then(response => response.json())  
+        .then(data => console.log(data))  
+        .catch(error => console.error(error));  
+  }
+
+  document.getElementById('addItemBtn').addEventListener('click', () => {  
+    addToCart(document.getElementById('product-id').value, document.getElementById('qty').value);  
+});  
+  
+document.getElementById('submit-order').addEventListener('click', submitOrder);
+
+  
+</script>
+{% endblock %}

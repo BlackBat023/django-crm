@@ -1,7 +1,7 @@
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
-      <a class="navbar-brand" href="{% url 'home.html' %}">DigiCave CRM</a>
+      <a class="navbar-brand" href="{% url 'core:home.html' %}">DigiCave CRM</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -9,17 +9,20 @@
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           {% if user.is_authenticated %}
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'add_client.html' %}">Add New Client</a>
+            <a class="nav-link" href="{% url 'core:add_client.html' %}">Add New Client</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'logout.html' %}">Logout</a>
+            <a class="nav-link" href="{% url 'orders:daily_orders.html' %}">Daily Orders</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'core:logout.html' %}">Logout</a>
           </li>
           {% else %}
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'home.html' %}">Login</a>
+            <a class="nav-link" href="{% url 'core:home.html' %}">Login</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'register.html' %}">Register</a>
+            <a class="nav-link" href="{% url 'core:register.html' %}">Register</a>
           </li>
           {% endif %}
         </ul>
