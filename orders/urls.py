@@ -4,6 +4,10 @@ from . import views
 # path registrations below this line
 app_name="orders"
 urlpatterns = [
-    path('daily_orders/', views.daily_orders, name="daily_orders.html"),
-    path('add_orders/<int:client_id>/', views.add_order, name="add_order"),
+    path('create/<int:client_id>/', views.order_create, name='order_create'),
+    path('<pk>/', views.order_detail, name='order_detail'),
+    path('<pk>/item/create/', views.order_item_create, name='order_item_create'),
+    path('update/<int:pk>/', views.order_update, name='order_update'),
+    path('<pk>/delete/', views.order_delete, name='order_delete'),
+    path('', views.order_list, name='order_list.html'),
 ]

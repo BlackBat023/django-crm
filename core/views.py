@@ -1,9 +1,9 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .register import SignUpForm, AddClientForm
 from .models import Clients
-from orders.models import Orders
+from orders.models import Order, OrderItem
 
 def home(request):
     clients = Clients.objects.all()
@@ -50,11 +50,12 @@ def register_user(request):
 def client_details(request, pk):
     if request.user.is_authenticated:
         # Lookup cutomer record
-        client_record = Clients.objects.get(id=pk)
-        orders_record = Orders.objects.all()
+        client_record = get_object_or_404(Clients, id=pk)
+        orders = Order.objects.filter(client = client_record).order_by('-order_date') # Retrieve orders for this client
         context = {
             "client_record": client_record,
-            "orders_record": orders_record,
+            "orders": orders,
+
         }
         return render(request, "client_details.html", context)
     else:

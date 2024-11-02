@@ -1,48 +1,46 @@
+# orders/forms.py
 from django import forms
-from .models import Orders
-import random
+from .models import Order, OrderItem
+from django.forms import inlineformset_factory
 
 class OrderForm(forms.ModelForm):
-    MOP_CHOICES = [
-        ('Cash', 'Cash'),
-        ('EFT', 'EFT'),
-        ('Credit Card', 'Credit Card'),
-    ]
-
-    PRODUCT_CHOICES = [
-        ("Rooikrans", "Rooikrans"),
-        ('Black Wattle', 'Black Wattle'),
-        ('Bloekom', 'Bloekom'),
-        ('Myrtle', 'Myrtle'),
-        ('Kameeldoring lg', 'Kameeldoring lg'),
-        ('Kameeldoring sm', 'kameeldoring sm'),
-        ('Swart haak lg', 'Swart haak lg'),
-        ('Swart haak sm', 'Swart haak sm'),
-        ('Rooikrans 26pcs bag', 'Rooikrans 26pcs bag'),
-        ('Rooikrans 12pcs bag', 'Rooikrans 12pcs bag'),
-        ('Black Wattle 26pcs bag', 'Black Wattle 26pcs bag'),
-        ('Bloekom 26pcs bag', 'Bloekom 26pcs bag'),
-        ('Starters', 'Starters'),
-        ('Blitz', 'Blitz'),
-    ]
-
-    PAYMENT_CHOICES = [
-        ('Paid', 'Paid'),
-        ('Pending', 'Pending'),
-    ]
-
-    product = forms.ChoiceField(choices=PRODUCT_CHOICES, required=True, widget=forms.widgets.Select(attrs={'class':'form-control'}))
-
-    mop = forms.ChoiceField(choices=MOP_CHOICES, required=True)
-
-    payment_status = forms.ChoiceField(choices=PAYMENT_CHOICES, required=True)
     class Meta:
-        model = Orders
-        order_nr = random.randint(1000, 9999)
-        fields = ['date', 'product', 'unit_price', 'qty', 'delivery_fee', 'notes', 'mop', 'payment_status', 'payment_date', 'order_num']
+        model = Order
+        fields = ('client', 'order_date', 'total_cost', 'payment_status', 'method_of_payment')
         widgets = {
-            'date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'notes': forms.Textarea(attrs={'class': 'form-control'}),
-            'payment_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'order_num': forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly', 'value': order_nr}),
+            'client': forms.TextInput(attrs={'readonly': 'readonly'}),
+            'order_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-controll'}),
+            'total_cost': forms.NumberInput(attrs={'readonly': 'readonly'}),
         }
+    
+    def __init__(self, *args, **kwargs):
+        super(OrderForm, self).__init__(*args,**kwargs)
+        self.fields['total_cost'].required = False
+
+class OrderItemForm(forms.ModelForm):
+    class Meta:
+        model = OrderItem
+        fields = ('item_name', 'quantity', 'unit_price', 'total_price')
+        widgets = {
+            'item_name': forms.Select(attrs={'class': 'form-controll'}),
+            'quantity': forms.NumberInput(attrs={'class': 'form-controll'}),
+            'unit_price': forms.NumberInput(attrs={'class': 'form-controll'}),
+            'total_price': forms.NumberInput(attrs={'readonly': 'readonly'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(OrderItemForm, self).__init__(*args, **kwargs)
+        self.fields['total_price'].widget.attrs['readonly'] = True
+        self.fields['total_price'].required = False
+
+    def clean_total_price(self):
+        unit_price = self.cleaned_data.get('unit_price', 0)
+        quantity = self.cleaned_data.get('quantity', 0)
+        delivery_price = self.cleaned_data.get('delivery_price', 0)
+        return unit_price * quantity + delivery_price
+    
+OrderItemFormSet = inlineformset_factory(
+    Order, OrderItem,
+    fields=('item_name', 'quantity', 'unit_price', 'delivery_price', 'total_price'),
+    extra=1, can_delete=True
+)

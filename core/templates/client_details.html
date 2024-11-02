@@ -15,10 +15,7 @@
           <strong>Suburb:</strong> {{ client_record.suburb }}<br/>
           <strong>Created:</strong> {{ client_record.created_at }}
       </p>
-    <a href="{% url 'orders:add_order' client_record.id %}" class="btn btn-dark">Book Delivery</a>
-    <p>
-      <h3 class="text-black-300">>>>Delivery Order Placements currently under construction<<<</h3>
-    </p>
+    <a href="{% url 'orders:order_create' client_record.id %}" class="btn btn-dark">Book Delivery</a>
   </div>
 </div>
 <div class="my-2">
@@ -27,32 +24,48 @@
     <a href="{% url 'core:delete_details' client_record.id %}" class="btn btn-danger">Delete</a>
 </div>
 
-<div class="col-md-10 offset-sm-1">
-  <div class="card">
-    <h3 class="card-header bg-dark text-center text-white">Order History</h3>
-    <div class="card-body">
-      {% for orders in orders_record %}
-      {% if orders_record.client_id == client_record.id %}
-      <h4 class="card-title">Order Number: {{ orders.order_num }}</h4>
-      <p class="card-text">
-            <strong>Order Date:</strong> {{ orders.date }}<br/>
-            <strong>Product:</strong> {{ orders.product }}</a><br/>
-            <strong>Quantity:</strong> {{ orders.qty }}<br/>
-            <strong>Unit Price:</strong> {{ orders.unit_price }}<br/>
-            <strong>Delivery Fee:</strong> {{ orders.delivery_fee }}<br/>
-            <strong>Total Cost:</strong> {{ orders.total_cost }}<br/>
-            <strong>Method of Payment:</strong> {{ orders.mop }}
-            <strong>Date of Payment:</strong> {{ orders.payment_date }}
-            <strong>Payment Status:</strong> {{ orders.payment_status }}
-            <strong>Notes:</strong> {{ orders.notes }}
-      </p>
+<div class="card col-md-7 offset-md-2 mx-auto">
+  <h2 class="card-header bg-dark text-white text-center">Order History</h2>
+  
+  <table class="card-body">
+    <thead class=" card-header table bg-dark text-white text-center">
+      <tr>
+        <th class="p-2">Order ID</th>
+        <th class="p-2">Delivery Date</th>
+        <th class="p-2">Description</th>
+        <th class="p-2">Unit Price</th>
+        <th class="p-2">Quantity</th>
+        <th class="p-2">Delivery Price</th>
+        <th class="p-2">Total Cost</th>
+        <th class="p-2">Status</th>
+        <th class="p-2">Action</th>
+      </tr>
+    </thead>
+    <tbody class="card-body">
+      {% if orders %}
+        {% for order in orders %}
+          {% for item in order.orderitem_set.all %}
+          <tr>
+            <td>{{ order.id }}</td>
+            <td>{{ order.order_date }}</td>
+            <td>{{ item.item_name }}</td>
+            <td>{{ item.unit_price }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>{{ item.delivery_price }}</td>
+            <td>{{ order.total_cost }}</td>
+            <td>{{ order.get_payment_status_display }}</td>
+            <td><a href="{% url 'orders:order_update' order.id %}" class="btn btn-dark">Edit</a></td>
+          </tr>
+          {% endfor %}
+        {% endfor %}
+      {% else %}
+      <tr>
+        <td colspan="8" class="text-center">No orders found.</td>
+      </tr>
       {% endif %}
-      {% endfor %}
-      <p>
-        <h3 class="text-black-300">>>>No orders to view<<<</h3>
-      </p>
-    </div>
-  </div>
+    </tbody>
+  </table>
+  <div class="card-footer"></div>
 </div>
 <script>
 </script>
