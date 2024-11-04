@@ -41,6 +41,6 @@ class OrderItemForm(forms.ModelForm):
     
 OrderItemFormSet = inlineformset_factory(
     Order, OrderItem,
-    fields=('item_name', 'quantity', 'unit_price', 'delivery_price', 'total_price'),
+    fields=('id', 'item_name', 'quantity', 'unit_price', 'delivery_price', 'total_price'),
     extra=1, can_delete=True
 )

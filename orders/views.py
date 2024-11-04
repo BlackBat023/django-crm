@@ -101,11 +101,13 @@ def order_update(request, pk):
                     formset.save()
                     order.update_total_cost()
                 messages.success(request, "Order updated successfully!")
-                return redirect('order_detail', pk=order.pk)
+                return redirect('orders:order_detail', pk=order.pk)
             except Exception as e:
                 messages.error(request, f"An Error has occurred: {str(e)}")
         else:
-            messages.error(request, "Form validation errors: Please correct!")
+            print("Form errors:", form.errors)
+            print("Formset errors:", formset.errors)
+            messages.error(request, "Form validation errors: {form.errors}, {formset.errors}")
     else:
         form = OrderForm(instance=order)
         formset = OrderItemFormSet(instance=order)

@@ -6,6 +6,7 @@ Setup Orders Application
     - setup models.py DONE
     - Order Capture form DONE
     - Edit Order form DONE
+        - Fix order update save issue DONE
     - Delete Order function
     - Display Order History in Core App DONE
     - Access and print invoices

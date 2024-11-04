@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 
+
+{% block content %}
+
+
 {% if messages %}
     {% for message in messages %}
     <div class="alert alert-warning alert-dismissible fade show" role="alert">
@@ -9,7 +13,6 @@
     {% endfor %}
 {% endif %}
 
-{% block content %}
 <div class="col-md-6 offset-md-3">
     <div class="bg-dark text-white text-center">
         <h1>Order Details</h1>
@@ -46,5 +49,6 @@
         </tbody>
     </table>
     <p><strong>Total Cost: R{{ order.total_cost }}</strong></p>
+    <a href="{% url 'core:home.html' %}" class="btn btn-dark">Done</a>
 </div>
 {% endblock %}

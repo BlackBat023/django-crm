@@ -1,6 +1,15 @@
 
 {% extends 'base.html' %}
 
+{% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
 {% block content %}
 <div class="bg-dark">
     <h2 class="text-white text-center">Update Order</h2>
@@ -25,13 +34,29 @@
         </thead>
         <tbody>
         {% for form in formset %}
+            {% if form.non_field_errors %}
+            <tr class="error-row">
+                <td colspan="5"><div class="alert alert-danger">{{ form.non_field_errors }}</div></td>
+            </tr>
+            {% endif %}
             <tr>
+                {{ form.id }}
                 <td>{{ form.item_name }}</td>
                 <td>{{ form.quantity }}</td>
                 <td>{{ form.unit_price }}</td>
                 <td>{{ form.delivery_price }}</td>
                 <td>{{ form.total_price }}</td>
+                <td>{{ form.DELETE }}</td>
             </tr>
+            {% if form.errors %}
+            <tr>
+                <td colspan="6">
+                    <div class="alert alert-danger">
+                        {{ form.errors }}
+                    </div>
+                </td>
+            </tr>
+            {% endif %}
         {% endfor %}
         </tbody>
     </table>

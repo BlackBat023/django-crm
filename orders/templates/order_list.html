@@ -1,25 +1,43 @@
 {% extends 'base.html' %}
 
 {% block content %}
-{% if messages %}
-        {% for message in messages %}
-        <div class="alert alert-warning alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    {% endfor %}
-{% endif %}
 
-<div class="col-md-6 offset-md-3 bg-dark text-white text-center">
+
+<div class="bg-dark text-white text-center">
     <h1>Order List</h1>
 </div>
 
-<div class="col-md-6 offset-md-3">
-    <ul>
+<div class="offset-md-3">
+    <table>
+        <thead>
+            <tr>
+                <th>Order No.</th>
+                <th>Client</th>
+                <th>Contact No.</th>
+                <th>Product Description</th>
+                <th>Quantity</th>
+                <th>Total Cost</th>
+                <th>Status</th>
+                <th>Address</th>
+            </tr>
+        </thead>
+        <tbody>
         {% for order in orders %}
-            <li><a href="{% url 'orders:order_detail' order.id %}">{{ order.client }}</a></li>
+        <a href="{% url 'orders:order_detail' order.id %}">
+            <tr>
+                <td>{{ order.id }}</td>
+                <td>{{ order.client }}</td>
+                <td>{{ client.phone }}</td>
+                <td>{{ order.item_name }}</td>
+                <td>{{ order.quantity }}</td>
+                <td>{{ order.total_cost }}</td>
+                <td>{{ order.status }}</td>
+                <td>{{ order.address }}</td>
+            </tr>
+        </a>
         {% endfor %}
-    </ul>
+        </tbody>
+    </table>
 </div>
 
 {% endblock %}

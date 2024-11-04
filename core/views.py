@@ -16,17 +16,17 @@ def home(request):
         if user is not None:
             login(request, user)
             messages.success(request, "Welcome " + username)
-            return redirect("home.html")
+            return redirect("core:home.html")
         else:
             messages.error(request, "We encountered an error and could not log you in, please try again...")
-            return redirect("home.html")
+            return redirect("core:home.html")
     else:
         return render(request, 'home.html', {"clients": clients})
 
 def logout_user(request):
     logout(request)
     messages.success(request, "You have been logged out...")
-    return redirect("home.html")
+    return redirect("core:home.html")
 
 def register_user(request):
     if request.method == 'POST':
