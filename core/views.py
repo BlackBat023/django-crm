@@ -104,5 +104,5 @@ def edit_details(request, pk):
         return render(request, 'edit_details.html', {'form': form})
     else:
         messages.error(request, "You must be logged in to view this page...")
-        return redirect("home.html")
+        return redirect("core:home.html")
 

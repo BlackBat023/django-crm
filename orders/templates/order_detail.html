@@ -13,7 +13,7 @@
     {% endfor %}
 {% endif %}
 
-<div class="col-md-6 offset-md-3">
+<div class="col-md-10 offset-md-1">
     <div class="bg-dark text-white text-center">
         <h1>Order Details</h1>
     </div>
@@ -49,6 +49,9 @@
         </tbody>
     </table>
     <p><strong>Total Cost: R{{ order.total_cost }}</strong></p>
-    <a href="{% url 'core:home.html' %}" class="btn btn-dark">Done</a>
+    <div class="row">
+        <a href="{% url 'core:home.html' %}" class="col btn btn-dark">Done</a>
+        <a href="{% url 'orders:order_update' order.id %}" class="col btn btn-dark">Update</a>
+    </div>
 </div>
 {% endblock %}

@@ -7,10 +7,32 @@
     <h1>Order List</h1>
 </div>
 
-<div class="offset-md-3">
-    <table>
+<div class="col-md-10 offset-md-1">
+    <form method="get" class="md-3">
+        <div class="row">
+            <div class="col-md-4">
+                <label for="start_date">Start Date:</label>
+                <input type="date" id="start_date" name="start_date">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <label for="end_date">End Date:</label>
+                <input type="date" id="end_date" name="end_date">
+            </div>
+        </div>
+        <div class="col-md-4 align-self-end">
+            <button type="submit" class="btn btn-dark">
+                <i data-feather="filter"></i> Filter
+            </button>
+            <a href="{% url 'orders:order_list.html' %}" class="btn btn-secondary">
+                <i data-feather="refresh-cw"></i> Reset
+            </a>
+        </div>
+    </form>
+    <table class="table text-center">
         <thead>
-            <tr>
+            <tr class="table-dark text-white">
                 <th>Order No.</th>
                 <th>Client</th>
                 <th>Contact No.</th>
@@ -23,18 +45,22 @@
         </thead>
         <tbody>
         {% for order in orders %}
-        <a href="{% url 'orders:order_detail' order.id %}">
-            <tr>
+            
+            <tr onclick="window.location='{% url 'orders:order_detail' order.id %}';" style="cursor:pointer;">
                 <td>{{ order.id }}</td>
                 <td>{{ order.client }}</td>
-                <td>{{ client.phone }}</td>
-                <td>{{ order.item_name }}</td>
-                <td>{{ order.quantity }}</td>
+                <td>{{ order.client.contact }}</td>
+                <td>{{ order.get_item_names }}</td>
+                <td>{{ order.get_total_quantity }}</td>
                 <td>{{ order.total_cost }}</td>
-                <td>{{ order.status }}</td>
-                <td>{{ order.address }}</td>
+                <td>{{ order.payment_status }}</td>
+                <td>{{ order.client.address }}</td>
+                <td><a href="{% url 'orders:order_delete' order.id %}" onclick="event.stopPropagation()" class="btn btn-danger">Delete</a></td>
             </tr>
-        </a>
+        {% empty %}
+            <tr>
+                <td colspan="8">No Orders Found</td>
+            </tr>
         {% endfor %}
         </tbody>
     </table>

@@ -20,6 +20,12 @@ class Order(models.Model):
         self.total_cost = sum(item.total_price for item in self.orderitem_set.all())
         self.save()
 
+    def get_item_names(self):
+        return ", ".join([item.item_name for item in self.orderitem_set.all()])
+    
+    def get_total_quantity(self):
+        return sum(item.quantity for item in self.orderitem_set.all())
+
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     item_name = models.CharField(max_length=100)

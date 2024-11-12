@@ -2,7 +2,7 @@
 import logging
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_http_methods
+from django.views.decorators.http import require_http_methods, require_POST
 from django.contrib import messages
 from django.forms import inlineformset_factory
 from .forms import OrderForm, OrderItemForm, OrderItemFormSet
@@ -11,13 +11,40 @@ from core.models import Clients
 import json
 from django.http import JsonResponse
 from django.db import transaction
+from datetime import datetime
 
 logger = logging.getLogger('orders')
 
 @login_required
 def order_list(request):
-    orders = Order.objects.all()
-    return render(request, 'order_list.html', {'orders': orders})
+    clients = Clients.objects.all()
+    orders = Order.objects.select_related('client').all()
+    
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+    
+    # Get all clients
+    client_id = request.GET.get('client_id')
+
+    if start_date:
+        start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
+        orders = orders.filter(order_date__gte=start_date)
+    
+    if end_date:
+        end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
+        orders = orders.filter(order_date__lte=end_date)
+
+    # Get all orders
+    if client_id:
+        orders = orders.filter(client_id=client_id)
+    else:
+        orders = orders.all()
+    
+    context = {
+        'orders': orders,
+        'clients': clients,
+    }
+    return render(request, 'order_list.html', context)
 
 @login_required
 def order_detail(request, pk):
@@ -114,14 +141,15 @@ def order_update(request, pk):
     return render(request, 'order_update.html', {'form': form, 'formset': formset, 'order': order})
 
 @login_required
+@require_POST
 def order_delete(request, pk):
     delete_order = get_object_or_404(Order, pk=pk)
-    delete_items = OrderItem.objects.filter(order=delete_order)
 
-    # Delete the items first
-    delete_items.delete()
-    # Delete the order
-    delete_order.delete()
-    
-    messages.success(request, "Order successfully deleted...")
-    return redirect('orders:order_list.html')
+    try:
+        # This will automatically delete the related OrderItems due to CASCADE
+        delete_order.delete()
+        messages.success(request, 'Order deleted successfully')
+    except Exception as e:
+        messages.error(request, f"An error occurred while deleting the order: {str(e)}")
+
+    return redirect('orders:order_list')

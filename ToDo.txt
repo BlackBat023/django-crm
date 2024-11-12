@@ -7,7 +7,8 @@ Setup Orders Application
     - Order Capture form DONE
     - Edit Order form DONE
         - Fix order update save issue DONE
-    - Delete Order function
-    - Display Order History in Core App DONE
+    - Delete Order function DONE
+    - Display Order History/List in Core App DONE
+        - Filter Order Listings by Date DONE
     - Access and print invoices
     - Export database to pdf function
