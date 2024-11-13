@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Invoice {{ invoice.invoice_number }}</h2>
+<p>Order: {{ invoice.order.id }}</p>
+<p>Created: {{ invoice.created_at }}</p>
+<p>Due Date: {{ invoice.due_date }}</p>
+<p>Status: {% if invoice.paid %}Paid{% else %}Unpaid{% endif %}</p>
+<a href="{% url 'orders:print_invoice' invoice.id %}" target="_blank">Print Invoice</a>
+{% endblock %}

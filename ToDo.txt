@@ -10,5 +10,5 @@ Setup Orders Application
     - Delete Order function DONE
     - Display Order History/List in Core App DONE
         - Filter Order Listings by Date DONE
-    - Access and print invoices
+    - Generate and print invoices DONE
     - Export database to pdf function

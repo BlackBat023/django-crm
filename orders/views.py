@@ -4,14 +4,17 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods, require_POST
 from django.contrib import messages
+from django.template.loader import render_to_string
 from django.forms import inlineformset_factory
-from .forms import OrderForm, OrderItemForm, OrderItemFormSet
-from .models import Order, OrderItem
+from .forms import OrderForm, OrderItemForm, OrderItemFormSet, InvoiceForm
+from .models import Order, OrderItem, Invoice
 from core.models import Clients
 import json
-from django.http import JsonResponse
+from weasyprint import HTML
+from django.http import JsonResponse, HttpResponse
 from django.db import transaction
 from datetime import datetime
+import tempfile
 
 logger = logging.getLogger('orders')
 
@@ -19,7 +22,7 @@ logger = logging.getLogger('orders')
 def order_list(request):
     clients = Clients.objects.all()
     orders = Order.objects.select_related('client').all()
-    
+
     start_date = request.GET.get('start_date')
     end_date = request.GET.get('end_date')
     
@@ -153,3 +156,50 @@ def order_delete(request, pk):
         messages.error(request, f"An error occurred while deleting the order: {str(e)}")
 
     return redirect('orders:order_list')
+
+@login_required
+def generate_invoice(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+
+    if request.method == 'POST':
+        form = InvoiceForm(request.POST)
+        if form.is_valid():
+            invoice = form.save(commit=False)
+            invoice.order = order
+            invoice.invoice_number = f"INV-{order.id}-{Invoice.objects.count() + 1}"
+
+            # Generate the PDF file
+            html_string = render_to_string('invoice_template.html', {'order': order, 'invoice': invoice})
+            html = HTML(string=html_string)
+            result = html.write_pdf()
+
+            # Save PDF to temporary file
+            with tempfile.NamedTemporaryFile(delete=False) as output:
+                output.write(result)
+                temp_file = output.name
+
+            # Save the invoice with PDF file
+            invoice.pdf_file.save(f"{invoice.invoice_number}.pdf", open(temp_file, 'rb'))
+            invoice.save()
+
+            return redirect('orders:invoice_detail', invoice_id=invoice.id)
+    else:
+        form = InvoiceForm()
+
+    return render(request, 'generate_invoice.html', {'form': form, 'order': order})
+
+@login_required
+def invoice_detail(request, invoice_id):
+    invoice = get_object_or_404(Invoice, id=invoice_id)
+    return render(request, 'invoice_detail.html', {'invoice': invoice})
+
+def print_invoice(request, invoice_id):
+    invoice = get_object_or_404(Invoice, id=invoice_id)
+    
+    if invoice.pdf_file:
+        with open(invoice.pdf_file.path, 'rb') as pdf:
+            response = HttpResponse(pdf.read(), content_type='application/pdf')
+            response['Content-Disposition'] = f'inline;filename={invoice.invoice_number}.pdf'
+            return response
+        
+    return HttpResponse("PDF not found", status=404)

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Invoice {{ invoice.invoice_number }}</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="col-md-10 offest-md-1 text-center">
+        <h1>Rooikrans King</h1>
+        <h5>c/o van Zyl Enterprises</h5>
+        <p>
+            Cnr Bottelary & Jakaranda Rd<br/>
+            Protea Heights<br/>
+            Brackenfell<br/>
+            Cape Town<br/>
+            Tel: 082 722 1139 <br/>
+            Email: gerrithout777@gmail.com<br/>
+        </p>
+    </div>
+    <div class="border-dark-subtle rounded">
+        <h4>Invoice {{ invoice.invoice_number }}</h4>
+        <p>Order: {{ order.id }}</p>
+        <p>
+            Client: {{ order.client.first_name }} {{ order.client.last_name }}
+            Contact no.: {{ order.client.contact }}
+        </p>
+        <p>
+            Address: {{ order.client.address }}<br/>
+            Area: {{ order.client.area }}<br/>
+            City: {{ order.client.suburb }}<br/>
+        </p>
+        <p>
+            Date: {{ invoice.created_at|date:"F d, Y" }}<br/>
+            Due Date: {{ invoice.due_date|date:"F d, Y" }}
+        </p>
+    </div>
+    <div class="border-dark-subtle rounded">
+        <table class="table table-striped">
+            <tr class="row">
+                <th class="col">Item</th>
+                <th class="col">Quantity</th>
+                <th class="col">Unit Price</th>
+                <th class="col">Total</th>
+            </tr>
+            {% for item in order.orderitem_set.all %}
+            <tr class="row">
+                <td>{{ item.item_name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>R{{ item.unit_price }}</td>
+                <td>R{{ item.total_price }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <p class="text-end">Total: R{{ order.total_cost }}</p>
+    </div>
+
+    <div class="border-dark-subtle rounded">
+        <p>
+            Terms and Conditions:<br/>
+            1. Proof of payment (POP) to accompany all EFT payments.<br/>
+            2. Orders will be scheduled and delivered after receipt of POP.<br/>
+            3. Invoice is non-refundable and non-exchangeable.<br/>
+            4. This invoice is valid for 30 days.<br/>
+            5. Please contact Rooikrans King for any queries or clarifications.
+        </p>
+        <p>
+            EFT payment instructions:<br/>
+            All EFT payments to be made to the following account:<br/>
+            <ol>
+                <li>Gerrit van Zyl</li>
+                <li>Bank: ABSA Bank</li>
+                <li>Account no.: 713620548</li>
+                <li>Account type: Cheque Account</li>
+                <li>Reference: Client's Street number & name</li>
+            </ol>
+            Proof of payment to be sent to : 082 722 1139 (SMS or WhatApp) or mjver@mweb.co.za (Email)
+        </p>
+    </div>
+</body>
+</html>

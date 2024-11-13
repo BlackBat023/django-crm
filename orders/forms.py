@@ -1,6 +1,6 @@
 # orders/forms.py
 from django import forms
-from .models import Order, OrderItem
+from .models import Order, OrderItem, Invoice
 from django.forms import inlineformset_factory
 
 class OrderForm(forms.ModelForm):
@@ -44,3 +44,9 @@ OrderItemFormSet = inlineformset_factory(
     fields=('id', 'item_name', 'quantity', 'unit_price', 'delivery_price', 'total_price'),
     extra=1, can_delete=True
 )
+
+class InvoiceForm(forms.ModelForm):
+    class Meta:
+        model = Invoice
+        fields = ['due_date']
+    

@@ -1,6 +1,7 @@
 # orders/models.py
 from django.db import models
 from core.models import Clients
+from django.utils import timezone
 
 class Order(models.Model):
     client = models.ForeignKey(Clients, on_delete=models.CASCADE)
@@ -38,3 +39,16 @@ class OrderItem(models.Model):
         self.total_price = (self.unit_price * self.quantity) + self.delivery_price
         super().save(*args, **kwargs)
         self.order.update_total_cost()
+
+
+class Invoice(models.Model):
+    order = models.ForeignKey('Order', on_delete=models.CASCADE, related_name='invoices')
+    invoice_number = models.CharField(max_length=50, unique=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    due_date = models.DateField()
+    paid = models.BooleanField(default=False)
+    pdf_file = models.FileField(upload_to='invoices/', null=True, blank=True)
+
+    def __str__(self):
+        return f"Invoice {self.invoice_number} for Order {self.order.id}"
+    
