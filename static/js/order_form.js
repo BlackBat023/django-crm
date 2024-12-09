@@ -14,9 +14,12 @@ function renderItems() {
                     `<option value="${option}" ${item.item_name === option ? 'selected' : ''}>${option}</option>`
                 ).join('')}
             </select>
-            <input type="number" value="${item.quantity}" placeholder="Quantity" onchange="updateItem(${index}, 'quantity', this.value)"><br/>
-            <input type="number" step="0.01" value="${item.unit_price}" placeholder="Unit Price" onchange="updateItem(${index}, 'unit_price', this.value)"><br/>
-            <input type="number" step="0.01" value="${item.delivery_price}" placeholder="Delivery Price" onchange="updateItem(${index}, 'delivery_price', this.value)"><br/>
+            <label for="quantity">Quantity</label>
+            <input id="quantity" class="form-control" type="number" value="${item.quantity}" placeholder="Quantity" onchange="updateItem(${index}, 'quantity', this.value)"><br/>
+            <label for="unit_price">Unit Price</label>
+            <input id="unit_price" class="form-control" type="number" step="0.01" value="${item.unit_price}" placeholder="Unit Price" onchange="updateItem(${index}, 'unit_price', this.value)"><br/>
+            <label for="delivery_price">Delivery Fee</label>
+            <input id="delivery_price" class="form-control" type="number" step="0.01" value="${item.delivery_price}" placeholder="Delivery Price" onchange="updateItem(${index}, 'delivery_price', this.value)"><br/>
             <span>Total: R${item.total_price}</span><br/>
             <button class="btn btn-dark" onclick="removeItem(${index})">Remove</button>
         `;

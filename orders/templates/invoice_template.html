@@ -2,13 +2,13 @@
 <html>
 <head>
     <title>Invoice {{ invoice.invoice_number }}</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="col-md-10 offest-md-1 text-center">
-        <h1>Rooikrans King</h1>
-        <h5>c/o van Zyl Enterprises</h5>
-        <p>
+    <div class="col-md-11 offest-md-1 text-center">
+        <h1 class="fw-bolder">Rooikrans King</h1>
+        <h5 class="fw-bold">c/o van Zyl Enterprises</h5>
+        <p style="font-size: 12px;">
             Cnr Bottelary & Jakaranda Rd<br/>
             Protea Heights<br/>
             Brackenfell<br/>
@@ -17,54 +17,70 @@
             Email: gerrithout777@gmail.com<br/>
         </p>
     </div>
-    <div class="border-dark-subtle rounded">
-        <h4>Invoice {{ invoice.invoice_number }}</h4>
-        <p>Order: {{ order.id }}</p>
+    <div class="m-1 p-2">
+        <h4 class="fw-bold">Invoice {{ invoice.invoice_number }}</h4>
+        <div class="fw-bold">Order: {{ order.id }}</div>
         <p>
-            Client: {{ order.client.first_name }} {{ order.client.last_name }}
+            To: {{ order.client.first_name }} {{ order.client.last_name }}<br/>
             Contact no.: {{ order.client.contact }}
         </p>
-        <p>
-            Address: {{ order.client.address }}<br/>
-            Area: {{ order.client.area }}<br/>
-            City: {{ order.client.suburb }}<br/>
+        <p class="text-md-start" style="font-size:14px;">
+            Address: <br/>
+            {{ order.client.address }}<br/>
+            {{ order.client.area }}<br/>
+            {{ order.client.suburb }}<br/>
         </p>
-        <p>
+        {% if order.payment_status == 'pending' %}
+        <div class="fw-bold" style="font-size:12px">
             Date: {{ invoice.created_at|date:"F d, Y" }}<br/>
             Due Date: {{ invoice.due_date|date:"F d, Y" }}
-        </p>
+        </div>
+        {% else %}
+        <div class="fw-bold" style="font-size:12px;">
+            Note: Paid in Full
+        </div>
+        {% endif %}
     </div>
-    <div class="border-dark-subtle rounded">
-        <table class="table table-striped">
-            <tr class="row">
-                <th class="col">Item</th>
-                <th class="col">Quantity</th>
-                <th class="col">Unit Price</th>
-                <th class="col">Total</th>
-            </tr>
+    <div class="border border-dark rounded mx-1 p-3">
+        <table class="table table-striped-dark" style="font-size: 14px;">
+            <thead>
+                <tr>
+                    <th class="col">Description</th>
+                    <th class="col">Quantity</th>
+                    <th class="col">Unit Price</th>
+                    <th class="col">Delivery Fee</th>
+                    <th class="col">Total</th>
+                </tr>
+            </thead>
+            <tbody>
             {% for item in order.orderitem_set.all %}
-            <tr class="row">
-                <td>{{ item.item_name }}</td>
-                <td>{{ item.quantity }}</td>
-                <td>R{{ item.unit_price }}</td>
-                <td>R{{ item.total_price }}</td>
-            </tr>
+                <tr>
+                    <td>{{ item.item_name }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>R{{ item.unit_price }}</td>
+                    <td>R{{ item.delivery_price }}</td>
+                    <td>R{{ item.total_price }}</td>
+                </tr>
             {% endfor %}
+            <tr>
+                <td class="text-sm-end colspan-5 offset-md-5">Total: R{{ order.total_cost }}</td>
+            </tr>
+            </tbody>
         </table>
-
-        <p class="text-end">Total: R{{ order.total_cost }}</p>
+        <p style="font-size:12px;">Delivery Instructions: {{ invoice.notes }}</p>
     </div>
 
-    <div class="border-dark-subtle rounded">
-        <p>
+    <div class="row border border-dark rounded m-1 p-2 bg-gray-500" style="font-size: 12px">
+        <div class="col">
             Terms and Conditions:<br/>
             1. Proof of payment (POP) to accompany all EFT payments.<br/>
             2. Orders will be scheduled and delivered after receipt of POP.<br/>
-            3. Invoice is non-refundable and non-exchangeable.<br/>
-            4. This invoice is valid for 30 days.<br/>
-            5. Please contact Rooikrans King for any queries or clarifications.
-        </p>
-        <p>
+            3. Products is non-refundable.<br/>
+            4. Invoice must be paid in full.<br/>
+            5. Please contact Rooikrans King for any queries or clarifications.<br/>
+            6. Deliveries are strictly tip&go only.<br/>
+        </div>
+        <div class="col">
             EFT payment instructions:<br/>
             All EFT payments to be made to the following account:<br/>
             <ol>
@@ -75,7 +91,7 @@
                 <li>Reference: Client's Street number & name</li>
             </ol>
             Proof of payment to be sent to : 082 722 1139 (SMS or WhatApp) or mjver@mweb.co.za (Email)
-        </p>
+        </div>
     </div>
 </body>
 </html>

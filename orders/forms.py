@@ -48,5 +48,5 @@ OrderItemFormSet = inlineformset_factory(
 class InvoiceForm(forms.ModelForm):
     class Meta:
         model = Invoice
-        fields = ['due_date']
+        fields = ['due_date', 'notes']
     

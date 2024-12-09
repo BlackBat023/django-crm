@@ -9,7 +9,9 @@ from django.forms import inlineformset_factory
 from .forms import OrderForm, OrderItemForm, OrderItemFormSet, InvoiceForm
 from .models import Order, OrderItem, Invoice
 from core.models import Clients
+from django.db.models import Prefetch
 import json
+import weasyprint
 from weasyprint import HTML
 from django.http import JsonResponse, HttpResponse
 from django.db import transaction
@@ -21,7 +23,10 @@ logger = logging.getLogger('orders')
 @login_required
 def order_list(request):
     clients = Clients.objects.all()
-    orders = Order.objects.select_related('client').all()
+    orders = Order.objects.all().select_related('client').prefetch_related(
+        Prefetch('invoice', queryset=Invoice.objects.all())
+    )
+    # invoices = Order.objects.prefetch_related('invoices').all()
 
     start_date = request.GET.get('start_date')
     end_date = request.GET.get('end_date')
@@ -46,6 +51,7 @@ def order_list(request):
     context = {
         'orders': orders,
         'clients': clients,
+        # 'invoices': invoices,
     }
     return render(request, 'order_list.html', context)
 
@@ -146,16 +152,13 @@ def order_update(request, pk):
 @login_required
 @require_POST
 def order_delete(request, pk):
-    delete_order = get_object_or_404(Order, pk=pk)
-
-    try:
-        # This will automatically delete the related OrderItems due to CASCADE
-        delete_order.delete()
+    if request.method == 'POST':
+        order = get_object_or_404(Order, pk=pk)
+        order.delete()
         messages.success(request, 'Order deleted successfully')
-    except Exception as e:
-        messages.error(request, f"An error occurred while deleting the order: {str(e)}")
-
-    return redirect('orders:order_list')
+        return redirect('orders:order_list.html')
+    else:
+        return render(request, 'orders:order_delete_confirm.html', {'order': order})
 
 @login_required
 def generate_invoice(request, order_id):
@@ -181,6 +184,10 @@ def generate_invoice(request, order_id):
             # Save the invoice with PDF file
             invoice.pdf_file.save(f"{invoice.invoice_number}.pdf", open(temp_file, 'rb'))
             invoice.save()
+
+            # Set the invoice field of the Order object
+            order.invoice = invoice
+            order.save()
 
             return redirect('orders:invoice_detail', invoice_id=invoice.id)
     else:

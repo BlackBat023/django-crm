@@ -100,9 +100,9 @@ def edit_details(request, pk):
         if form.is_valid():
             form.save()
             messages.success(request, "Client details successfully updated...")
-            return redirect('home.html')
+            return redirect('core:home.html')
         return render(request, 'edit_details.html', {'form': form})
     else:
         messages.error(request, "You must be logged in to view this page...")
-        return redirect("core:home.html")
+        return redirect("core:edit_details.html")
 

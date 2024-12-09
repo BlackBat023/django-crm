@@ -5,6 +5,7 @@
 <p>Order: {{ invoice.order.id }}</p>
 <p>Created: {{ invoice.created_at }}</p>
 <p>Due Date: {{ invoice.due_date }}</p>
-<p>Status: {% if invoice.paid %}Paid{% else %}Unpaid{% endif %}</p>
-<a href="{% url 'orders:print_invoice' invoice.id %}" target="_blank">Print Invoice</a>
+<p>Status: {{ invoice.order.payment_status }}</p>
+<a href="{% url 'orders:print_invoice' invoice.id %}" class="btn btn-sm-dark" target="_blank">Print Invoice</a>
+<a href="{% url 'core:home.html' %}" class="btn btn-sm-dark">Done</a>
 {% endblock %}

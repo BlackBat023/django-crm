@@ -7,20 +7,38 @@
     <h1>Create Order for: Mr. {{ client.last_name }}</h1>
 </div>
 
-<div class="col-md-6 offset-md-3">
+<div class="col-md-6 offset-md-3 mb-5">
     <h2 class="bg-dark text-white text-center">Complete Order Form</h2>
 
     <form method="post" id="orderForm">
         {% csrf_token %}
         {{ form.as_p }}
 
-        <h3 class="bg-dark text-white text-center">Order Items</h3>
-        <div id="orderItems" class="p-5"></div>
+        
+        <div class="modal fade p-5" id="orderModal" tabindex="-1" area-labelledby="orderItemLabel" area-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="bg-dark text-white text-center modal-title" id="orderItemLabel">Order Items</h3>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" area-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="orderItems">
+                            <!-- Order items will be dynamically populated here -->
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="addItem" class="btn btn-dark">Add Item</button>
+                        <button type="submit" class="btn btn-dark">Save Order</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#orderModal">Specify items</button>
 
-        <button type="button" id="addItem" class="btn btn-dark">Add Item</button>
-        <button type="submit" class="btn btn-dark">Save Order</button>
     </form>
 </div>
 
 <script src="{% static 'js/order_form.js' %}"></script>
+
 {% endblock %}

@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+{% endif %}
+
+<div class="col-md-10 offset-md-1 bg-dark text-white text-center">
+    <h1>Order Deleted</h1>
+</div>
+<div class="col-md-10 offset-md-1 border border-dark-subtle rounded">
+    <h4 class="text-center">Your order {{ order.id }} has been deleted</h4>
+    <p class="text-center">
+        <ul>
+            <li>Client: {{ order.client.last_name }}, {{ order.client.first_name }}</li>
+            <li>Date: {{ order.date }}</li>
+            <li>
+                Order details:
+                <ul>
+                    {% for item in order.orderitem_set.all %}
+                    <li>Description: {{ item.item_name }}</li>
+                    <li>Quantity: {{ item.quantity }}</li>
+                    <li>Cost: {{ item.total_price }}</li>
+                    {% endfor %}
+                </ul>
+            </li>
+            <li>Total: {{ order.total_cost }}</li>
+        </ul>
+    </p>
+    <p><a href="{% url 'orders:order_list.html' %}" class="btn btn-dark">Done</a></p>
+</div>
