@@ -10,5 +10,7 @@ Setup Orders Application
     - Delete Order function DONE
     - Display Order History/List in Core App DONE
         - Filter Order Listings by Date DONE
+        - Include Invoice number in listing with link DONE
+        - Include Invoice number in Orde history under Client Details DONE
     - Generate and print invoices DONE
     - Export database to pdf function

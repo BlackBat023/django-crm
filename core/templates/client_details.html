@@ -35,6 +35,7 @@
         <th class="p-2">Total Cost</th>
         <th class="p-2">Method of Payment</th>
         <th class="p-2">Status</th>
+        <th class="p-2">Invoice no.</th>
         <th class="p-2">Action</th>
       </tr>
     </thead>
@@ -47,6 +48,7 @@
             <td>{{ order.total_cost }}</td>
             <td>{{ order.method_of_payment }}</td>
             <td>{{ order.get_payment_status_display }}</td>
+            <td>{{ order.invoice.invoice_number }}</td>
             <td>
               <a href="{% url 'orders:order_delete' order.id %}" class="btn btn-danger" onclick="event.stopPropagation();">Delete</a>
             </td>

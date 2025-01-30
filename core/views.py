@@ -3,7 +3,11 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .register import SignUpForm, AddClientForm
 from .models import Clients
+from orders.models import Invoice
 from orders.models import Order, OrderItem
+from django.db.models import Count, Sum
+from django.db.models.functions import Extract
+from datetime import datetime, timedelta
 
 def home(request):
     clients = Clients.objects.all()
@@ -106,3 +110,33 @@ def edit_details(request, pk):
         messages.error(request, "You must be logged in to view this page...")
         return redirect("core:edit_details.html")
 
+def dashboard(request):
+    total_clients = Clients.objects.count()
+
+    total_orders = Order.objects.count()
+
+    current_year = datetime.now().year
+    
+    current_year_orders = Order.objects.filter(order_date__year=current_year)
+    if current_year_orders.exists():
+        most_orders_month = Order.objects.filter(order_date__year=current_year).annotate(month=Extract('order_date', 'month')).values('month').annotate(total_orders=Count('id')).order_by('-total_orders')[0]['month']
+        most_orders_month = most_orders_month['month'] if most_orders_month else None
+    else:
+        most_orders_month = None
+    
+    most_ordered_product = OrderItem.objects.filter(order__in=current_year_orders).annotate(total_quantity=Sum('quantity')).order_by('-total_quantity')[0]
+
+    previous_year = current_year - 1
+    previous_year_orders = Order.objects.filter(order_date__year=previous_year)
+    if previous_year_orders.exists():
+        most_ordered_product_previous_year = OrderItem.objects.filter(order__in=previous_year_orders).annotate(total_quantity=Sum('quantity')).order_by('-total_quantity')[0]
+    else:
+        most_ordered_product_previous_year = None
+    
+    return render(request, 'dashboard.html', {
+        'total_clients': total_clients,
+        'total_orders': total_orders,
+        'most_orders_month': most_orders_month,
+        'most_ordered_product': most_ordered_product,
+        'most_ordered_product_previous_year': most_ordered_product_previous_year,
+    })

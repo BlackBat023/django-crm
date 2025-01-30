@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="card row">
+    <h3 class="card-header bg-dark text-white text-center">Darshboard</h3>
+    <div class="card-body">
+        <div class="card col">
+            <h4 class="card-title bg-dark text-white text-center">Total Customer Records:</h4>
+            <div class="card-body text-center">{{ total_clients }}</div>
+        </div>
+        <div class="card col">
+            <h4 class="card-title bg-dark text-white text-center">Total Captured Orders:</h4>  
+            <div class="card-body text-center">{{ total_orders }}</div>
+        </div>
+        <div class="card col">
+            <h4 class="card-title bg-dark text-white text-center">Most Orders Places Month (Current Year):</h4>
+            <div class="card-body text-center">{{ most_orders_month }}</div>
+        </div>
+        <div class="card col">
+            <h4 class="card-title bg-dark text-white text-center">Most Ordered Product (current Year):</h4>
+            <div class="card-body text-center">{{ most_ordered_product.item_name }}</div>
+        </div>
+        <div class="card col">
+            <h4 class="card-title bg-dark text-white text-center">Most Ordered Product (Previous Year):</h4>
+            <div class="card-body text-center">{{ most_ordered_product_previous_year.item_name }}</div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
