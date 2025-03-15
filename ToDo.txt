@@ -13,4 +13,6 @@ Setup Orders Application
         - Include Invoice number in listing with link DONE
         - Include Invoice number in Orde history under Client Details DONE
     - Generate and print invoices DONE
-    - Export database to pdf function
+    - Add "Special Notes:" column to client list database DONE
+    - Have the "done" button in the invoice_detail template revert back to the filtered orders list
+    - Export database to pdf/csv function

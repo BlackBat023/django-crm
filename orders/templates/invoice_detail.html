@@ -7,5 +7,5 @@
 <p>Due Date: {{ invoice.due_date }}</p>
 <p>Status: {{ invoice.order.payment_status }}</p>
 <a href="{% url 'orders:print_invoice' invoice.id %}" class="btn btn-sm-dark" target="_blank">Print Invoice</a>
-<a href="{% url 'core:home.html' %}" class="btn btn-sm-dark">Done</a>
+<a href="{{ return_url }}" class="btn btn-sm-dark">Done</a>
 {% endblock %}

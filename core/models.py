@@ -9,6 +9,7 @@ class Clients(models.Model):
     address = models.CharField(max_length=200)
     area = models.CharField(max_length=200)
     suburb = models.CharField(max_length=200)
+    special_notes = models.TextField(blank=True, null=True) # List any iimportant information about the client
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

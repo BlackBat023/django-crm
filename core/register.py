@@ -39,7 +39,7 @@ class AddClientForm(forms.ModelForm):
     address = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={'class': 'form-control', 'placeholder':'Address 1'}), label="")
     area = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={'class': 'form-control', 'placeholder':'Address 2'}), label="")
     suburb = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={'class': 'form-control', 'placeholder':'Suburb'}), label="")
-
+    special_notes = forms.CharField(required=False, widget=forms.widgets.Textarea(attrs={'class': 'form-control', 'placeholder':'Special Notes'}), label="")
     class Meta:
         model = Clients
         exclude = ('user',)

@@ -8,6 +8,9 @@ from orders.models import Order, OrderItem
 from django.db.models import Count, Sum
 from django.db.models.functions import Extract
 from datetime import datetime, timedelta
+from calendar import month_name
+
+from django.contrib.auth.decorators import login_required
 
 def home(request):
     clients = Clients.objects.all()
@@ -100,6 +103,7 @@ def edit_details(request, pk):
     if request.user.is_authenticated:
         # Find client record
         client_record = Clients.objects.get(id=pk)
+        # Re-using the client registration form with a client_record instance to populate the form
         form = AddClientForm(request.POST or None, instance=client_record)
         if form.is_valid():
             form.save()
@@ -110,17 +114,16 @@ def edit_details(request, pk):
         messages.error(request, "You must be logged in to view this page...")
         return redirect("core:edit_details.html")
 
+@login_required
 def dashboard(request):
     total_clients = Clients.objects.count()
-
     total_orders = Order.objects.count()
-
     current_year = datetime.now().year
     
     current_year_orders = Order.objects.filter(order_date__year=current_year)
     if current_year_orders.exists():
-        most_orders_month = Order.objects.filter(order_date__year=current_year).annotate(month=Extract('order_date', 'month')).values('month').annotate(total_orders=Count('id')).order_by('-total_orders')[0]['month']
-        most_orders_month = most_orders_month['month'] if most_orders_month else None
+        most_orders_month_data = Order.objects.filter(order_date__year=current_year).annotate(month=Extract('order_date', 'month')).values('month').annotate(total_orders=Count('id')).order_by('-total_orders')[0]
+        most_orders_month = month_name[most_orders_month_data['month'] if most_orders_month_data else None]
     else:
         most_orders_month = None
     
@@ -130,6 +133,8 @@ def dashboard(request):
     previous_year_orders = Order.objects.filter(order_date__year=previous_year)
     if previous_year_orders.exists():
         most_ordered_product_previous_year = OrderItem.objects.filter(order__in=previous_year_orders).annotate(total_quantity=Sum('quantity')).order_by('-total_quantity')[0]
+        most_orders_month_previous_year_data = Order.objects.filter(order_date__year=previous_year).annotate(month=Extract('order_date', 'month')).values('month').annotate(total_orders=Count('id')).order_by('-total_orders')[0]
+        most_orders_month_previous_year = month_name[most_orders_month_previous_year_data['month'] if most_orders_month_previous_year_data else None]
     else:
         most_ordered_product_previous_year = None
     
@@ -137,6 +142,7 @@ def dashboard(request):
         'total_clients': total_clients,
         'total_orders': total_orders,
         'most_orders_month': most_orders_month,
+        'most_orders_month_previous_year': most_orders_month_previous_year,
         'most_ordered_product': most_ordered_product,
         'most_ordered_product_previous_year': most_ordered_product_previous_year,
     })

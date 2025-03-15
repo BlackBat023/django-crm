@@ -1,5 +1,6 @@
 # orders/views.py
 import logging
+import os
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods, require_POST
@@ -11,10 +12,10 @@ from .models import Order, OrderItem, Invoice
 from core.models import Clients
 from django.db.models import Prefetch
 import json
-import weasyprint
 from weasyprint import HTML
 from django.http import JsonResponse, HttpResponse
 from django.db import transaction
+from django.conf import settings
 from datetime import datetime
 import tempfile
 
@@ -152,13 +153,20 @@ def order_update(request, pk):
 @login_required
 @require_POST
 def order_delete(request, pk):
+    order = get_object_or_404(Order, pk=pk)
+    invoice = get_object_or_404(Invoice, order=order)
+
     if request.method == 'POST':
-        order = get_object_or_404(Order, pk=pk)
+        invoice_file_path = os.path.join(settings.MEDIA_ROOT, 'Invoice', invoice.invoice_number)
+        if os.path.exists(invoice_file_path):
+            os.remove(invoice_file_path)
+
+        invoice.delete()      
         order.delete()
         messages.success(request, 'Order deleted successfully')
         return redirect('orders:order_list.html')
-    else:
-        return render(request, 'orders:order_delete_confirm.html', {'order': order})
+
+    return HttpResponse("Order deletion failed", stattus=400)
 
 @login_required
 def generate_invoice(request, order_id):
@@ -198,7 +206,12 @@ def generate_invoice(request, order_id):
 @login_required
 def invoice_detail(request, invoice_id):
     invoice = get_object_or_404(Invoice, id=invoice_id)
-    return render(request, 'invoice_detail.html', {'invoice': invoice})
+    return_url = request.GET.get('return_url', '/')
+    context = {
+        'invoice': invoice,
+        'return_url': return_url,
+    }
+    return render(request, 'invoice_detail.html', context)
 
 def print_invoice(request, invoice_id):
     invoice = get_object_or_404(Invoice, id=invoice_id)

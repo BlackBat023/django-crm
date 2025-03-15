@@ -58,7 +58,7 @@
                 <td>{{ order.client.address }}</td>
                 <td>
                     {% if order.invoice %}
-                        <a class="btn btn-sm-dark" href="{% url 'orders:invoice_detail' order.invoice.id %}" onclick="event.stopPropagation()">{{ order.invoice.invoice_number }}</a>
+                        <a class="btn btn-sm-dark" href="{% url 'orders:invoice_detail' order.invoice.id %}?return_url={% url 'orders:order_list.html' %}" onclick="event.stopPropagation()">{{ order.invoice.invoice_number }}</a>
                     {% else %}
                         No Invoices Found
                     {% endif %}    
