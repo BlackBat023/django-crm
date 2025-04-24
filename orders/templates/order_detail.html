@@ -50,7 +50,7 @@
     </table>
     <p><strong>Total Cost: R{{ order.total_cost }}</strong></p>
     <div class="row">
-        <a href="{% url 'core:home.html' %}" class="col btn btn-dark">Done</a>
+        <a href="{% url 'orders:order_list.html' %}?start_date={{ current_date }}&end_date={{ current_date }}" class="col btn btn-dark">Done</a>
         <a href="{% url 'orders:order_update' order.id %}" class="col btn btn-dark">Update</a>
         <a href="{% url 'orders:generate_invoice' order.id %}" class="btn btn-dark">Generate Invoice</a>
     </div>

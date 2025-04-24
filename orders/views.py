@@ -31,17 +31,23 @@ def order_list(request):
 
     start_date = request.GET.get('start_date')
     end_date = request.GET.get('end_date')
+
+    if start_date and end_date:
+        try:
+            start_date = datetime.strptime(start_date, '%Y-%m-%d')
+            end_date = datetime.strptime(end_date, '%Y-%m-%d')
+            orders = Order.objects.filter(order_date__range=[start_date, end_date])
+        except ValueError:
+            # Handle the invalid date format
+            orders = Order.objects.all()
+
+    # Filter by payment status
+    payment_status = request.GET.get('payment_status')
+    if payment_status:
+        orders = orders.filter(payment_status=payment_status)
     
     # Get all clients
     client_id = request.GET.get('client_id')
-
-    if start_date:
-        start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
-        orders = orders.filter(order_date__gte=start_date)
-    
-    if end_date:
-        end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
-        orders = orders.filter(order_date__lte=end_date)
 
     # Get all orders
     if client_id:
@@ -59,8 +65,13 @@ def order_list(request):
 @login_required
 def order_detail(request, pk):
     order = Order.objects.get(pk=pk)
+    current_date = datetime.now().strftime('%Y-%m-%d')
     print(order)
-    return render(request, 'order_detail.html', {'order': order})
+    context = {
+        'order': order,
+        'current_date': current_date,
+    }
+    return render(request, 'order_detail.html', context)
 
 @login_required
 @ require_http_methods(["GET", "POST"])
@@ -206,10 +217,10 @@ def generate_invoice(request, order_id):
 @login_required
 def invoice_detail(request, invoice_id):
     invoice = get_object_or_404(Invoice, id=invoice_id)
-    return_url = request.GET.get('return_url', '/')
+    current_date = datetime.now().strftime('%Y-%m-%d')
     context = {
         'invoice': invoice,
-        'return_url': return_url,
+        'current_date': current_date,
     }
     return render(request, 'invoice_detail.html', context)
 
